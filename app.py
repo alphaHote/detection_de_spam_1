@@ -2,7 +2,6 @@ from flask import Flask, render_template, url_for, request
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
-from utils import process_tweet, build_freqs, remove_punctuation, abbreviation
 
 #from sklearn.externals import joblib
 app = Flask(__name__)
@@ -16,10 +15,6 @@ def predict():
     df_data = df[['CONTENT', 'CLASS']]
     # Features and Labels
     df_x = df_data['CONTENT']
-    #df_x = remove_punctuation(df_x)
-    for i in df_x.index:
-        df_x.iloc[i]=remove_punctuation(df_x.iloc[i])
-        #df_x.iloc[i,0]=abbreviation(df_x.iloc[i,0])
     df_y = df_data.CLASS
     # Extract the features with countVectorizer
     corpus = df_x
@@ -33,8 +28,7 @@ def predict():
     clf.score(X_test, y_test)
     if request.method == 'POST':
         comment = request.form['comment']
-        comment+=' word'
-        comment = remove_punctuation(comment)
+        comment+=' '
         data = [comment]
         print (comment)
         vect = cv.transform(data).toarray()
